@@ -1,82 +1,62 @@
 #include <iostream>
+#include <algorithm>
 using namespace std;
 
 struct Grafite
 {
-    float calibre {0};
+    float calibre {0.0};
     string dureza {""};
     int tamanho {0};
 
-    int Desgaste()
+    Grafite(float calibre = 0.0, string dureza = "", int tamanho = 0) : calibre{calibre}, dureza{dureza}, tamanho{tamanho}{}
+
+    friend ostream& operator<<(ostream& os, const Grafite& grafite)
     {
-        if (this-> dureza == "HB")
-        {
-            return 1;
-        } else if (this-> dureza == "2B")
-        {
-            return 2;
-        } else if (this-> dureza == "4B")
-        {
-            return 4;
-        } else if (this-> dureza == "6B")
-        {
-            return 6;
-        }
-        return 0;
+        os << "Calibre: " << grafite.calibre << " mm, ";
+        os << "Dureza: " << grafite.dureza << ", ";
+        os << "Tamanho: " << grafite.tamanho << " mm\n ";
+        return os;
     }
-    
 };
 
 struct Lapiseira
 {
     float calibre {0};
-    Grafite grafite;
+    Grafite* grafite;
+    
 
-    void Escrever(int folhas)
+    Lapiseira(float calibre, Grafite* grafite = nullptr) : calibre{calibre}, grafite{grafite}{}
+
+    bool Colocargrafite(Grafite* grafite)
     {
-        int desgaste = this->grafite.Desgaste();
-
-        for (int i = 0; i != folhas; i++)
+        if (this->grafite != nullptr)
         {
-            if (this->grafite.tamanho - desgaste > 0)
-            {
-                this-> grafite.tamanho -= desgaste;
-            } else if (this-> grafite.tamanho - desgaste <= 0)
-            {
-                cout << "Acabou o grafite" << endl;
-                this-> remover();
-                break;
-            }
+            cout << "Lapiseira já possui grafite\n";
+            return false;
         }
-    }
-
-    bool ColocarGrafite(Grafite grafite)
-    {
-        if (this->grafite.dureza == "nulll")
+        if (grafite->calibre != this->calibre)
         {
-            if (this->calibre != grafite.calibre)
-            {
-                cout << "Calibre errado" << endl;
-            } else  {
-                this-> grafite = grafite;
-                    }
-            return true;
+            cout << "Calibre errado\n";
+            return false;
         }
-        return false;    
+        this->grafite = grafite;
+        return true;
     }
-
-    Grafite remover()
+    
+    Grafite* Tirargrafite()
     {
-        Grafite aux{this->grafite};
-        this-> grafite = *new Grafite();
-        return aux;
+        if (this->grafite == nullptr)
+        {
+            cout << "Não possui grafite";
+            return nullptr;
+        }
+        return exchange(this->grafite, nullptr);
     }
 };
 
 int main()
 {
-    
-
+    Grafite grafite(10, "HC", 10);
+    Lapiseira lapiseira(0.5, &grafite);
     return 0;
 }
-

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <vector>
 using namespace std;
 
 struct Grafite
@@ -17,46 +18,72 @@ struct Grafite
         os << "Tamanho: " << grafite.tamanho << " mm\n ";
         return os;
     }
+
+    int desgaste()
+    {
+        if (this->dureza == "HB") return 1;
+        else if (this->dureza == "2B") return 2;
+        else if (this->dureza == "4B") return 4;
+        else if (this->dureza == "6B") return 6;
+        else return 0;
+    }
 };
 
 struct Lapiseira
 {
     float calibre {0};
-    Grafite* grafite;
+    vector<Grafite> grafite;
     
 
-    Lapiseira(float calibre, Grafite* grafite = nullptr) : calibre{calibre}, grafite{grafite}{}
+    Lapiseira(float calibre = 0) : calibre{calibre}{}
 
-    bool Colocargrafite(Grafite* grafite)
+    friend ostream &operator<< (ostream &os, const Lapiseira &lapiseira){
+        os << "Calibre: " << lapiseira.calibre << "\n";
+        if (lapiseira.grafite.empty()){
+            os << "Grafite: null\n";
+        }
+        else{
+            for (int i = 0; i < lapiseira.grafite.size(); i++)
+            {
+                os << lapiseira.grafite[i];
+            }
+            
+        }
+        return os;
+    }
+
+    bool Colocargrafite(Grafite &grafite)
     {
-        if (this->grafite != nullptr)
+        if (grafite.calibre != this->calibre)
         {
-            cout << "Lapiseira já possui grafite\n";
-            return false;
+            cout << "Calibre incompativel" << endl;
+            return true;
         }
-        if (grafite->calibre != this->calibre)
+        if (this->grafite.size() == 4)
         {
-            cout << "Calibre errado\n";
-            return false;
+            cout << "Grafite completo" << endl;
+            return true;
         }
-        this->grafite = grafite;
+        this->grafite.push_back(grafite);
         return true;
     }
     
-    Grafite* Tirargrafite()
+    vector<Grafite> Tirargrafite(int i)
     {
-        if (this->grafite == nullptr)
+        if (this->grafite.empty())
         {
-            cout << "Não possui grafite";
-            return nullptr;
+            cout << "Não possui grafite" << endl;
+            return this->grafite;
         }
-        return exchange(this->grafite, nullptr);
+        vector<Grafite> aux = this->grafite;
+        this->grafite.erase(this->grafite.begin()+i);
+        return aux;
     }
 };
 
 int main()
 {
     Grafite grafite(10, "HC", 10);
-    Lapiseira lapiseira(0.5, &grafite);
+    Lapiseira lapiseira(0.5);
     return 0;
 }

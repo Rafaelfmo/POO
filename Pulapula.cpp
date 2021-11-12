@@ -76,6 +76,7 @@ int main()
     cout << fila << endl;
 
     fila.entrar();
+    fila.sair();
 
     cout << fila << endl; 
     return 0;

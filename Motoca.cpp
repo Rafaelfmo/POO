@@ -76,7 +76,7 @@ struct Moto
             this->minutos = 0;
             return true;
         }
-        cout << "A criança dirigiu por: " << this->minutos << "minutos\n" << endl;
+        cout << "A criança dirigiu por: " << this->minutos << "minutos\n";
         this->minutos -= minutos;
     }
 };

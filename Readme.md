@@ -1,1 +1,1 @@
-última tentativa pra dar crt!
+Repositório destinado a realizar as atividades de POO em c++!

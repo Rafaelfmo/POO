@@ -79,5 +79,5 @@ int main()
     fila.sair();
 
     cout << fila << endl; 
-    return 0;
+    return {0};
 }

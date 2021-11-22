@@ -76,7 +76,7 @@ struct Moto
             this->minutos = 0;
             return true;
         }
-        cout << "A criança dirigiu por: " << this->minutos << "minutos\n";
+        cout << "A criança dirigiu por: " << this->minutos << "minutos\n" << endl;
         this->minutos -= minutos;
     }
 };
@@ -94,5 +94,5 @@ int main()
     Pessoa humano ("Rafael", 19, 70);
     Moto vrumvrum (10, 30, &humano);
     cout << vrumvrum << endl;
-    return 0;
+    return {0};
 }

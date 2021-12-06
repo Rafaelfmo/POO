@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <map>
 using namespace std;
 
 class Cliente
@@ -21,10 +22,18 @@ public:
 class Sala
 {
 private:
-    vector<shared_ptr<Cliente>> assentos;
+    map<int, shared_ptr<Cliente>> assentos;
 
 public:
-    Sala(int vagas) : assentos(vagas, nullptr){}
+
+    Sala(int qtd_assentos)
+    {
+        for (int i = 0; i < qtd_assentos; i++)
+        {
+            assentos[i] = nullptr;
+        }
+    }
+
 
     bool reservar(const shared_ptr<Cliente>& cliente, int num_vagas)
     {
@@ -69,10 +78,10 @@ public:
  friend ostream& operator<<(ostream& os, const Sala& sala){
         os << "[ ";
         for(int i = 0; i < sala.assentos.size(); i++){
-            auto cadeiras = sala.assentos[i];
+            auto cadeiras = sala.assentos;
             os << " ";
-            if(cadeiras != nullptr){
-                os << *cadeiras;
+            if(cadeiras[i] != nullptr){
+                os << *cadeiras[i];
             } else {
                 os << "-";
             }

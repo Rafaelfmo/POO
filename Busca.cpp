@@ -2,6 +2,8 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <map>
+#include <string>
 
 using namespace std;
 
@@ -56,6 +58,11 @@ public:
     {
         return this->nome;
     }
+
+    vector<Telefone> getTelefone()
+    {
+        return this->telefones;
+    }
     
     void Adicionar(Telefone telefone)
     {
@@ -63,11 +70,11 @@ public:
         cout << "Telefone adicionado" << endl;
     }
 
-    void Remover(string numero)
+    void Remover(int index)
     {
         for (int i = 0; i < telefones.size(); i ++)
         {
-            if (this->telefones[i].getNumero() == numero)
+            if (i == index)
             {
                 this->telefones.erase(telefones.begin()+i);
                 cout << "telefone removido" << endl;
@@ -88,45 +95,47 @@ public:
 class Agenda
 {
 private:
-    vector <Contato> contatos;
+    map <string, Contato> contatos;
 
 public:
     Agenda(){}
-
-    vector<Contato> getContato()
-    {
-        return this->contatos;
-    }
-    
+ 
     void AdicionarContato(Contato contato)
     {
-        this->contatos.push_back(contato);
-        cout << "Contato adicionado" << endl;
+        auto it = contatos.find(contato.getNome());
+        if (it == contatos.end())
+        {
+            contatos[contato.getNome()] = contato;
+        }
+        else 
+        {
+            for (Telefone telefone : contato.getTelefone())
+            {
+                it->second.Adicionar(telefone);
+            }
+        }
     }
 
     void RemoverContato(string nome)
     {
-        for (int i = 0; i < contatos.size(); i++)
+        auto it = contatos.find(nome);
+        if (it != contatos.end())
         {
-            if (this->contatos[i].getNome() == nome)
-            {
-                this->contatos.erase(contatos.begin()+i);
-                cout << "Contato removido" << endl;              
-            }
+            contatos.erase(it);
         }
     }
 
     vector<Contato> ProcurarContato(string palavra)
     {
         vector<Contato> aux;
-        for (auto& c : this->contatos)
+        for (auto& i : this->contatos)
         {
             stringstream ss;
-            ss << c;
+            ss << i.second;
             string texto = ss.str();
             if (texto.find(palavra) != string::npos)
             {
-                aux.push_back(c);
+                aux.push_back(i.second);
             }
         }
         return aux;
@@ -146,9 +155,9 @@ public:
 
     friend ostream& operator<< (ostream& os, const Agenda& agenda)
     {
-        for (int i = 0; i < (int) agenda.contatos.size(); i++)
+        for (auto i : agenda.contatos)
         {
-            os << agenda.contatos[i] << endl;
+            os << i.first << i.second << endl;
         }
         return os;
     }
@@ -168,7 +177,6 @@ int main()
     contato.getNome();
 
     agenda.AdicionarContato(contato);
-    agenda.getContato();
     agenda.EncontrarPosicao("rafael");
     agenda.ProcurarContato("r");
     

@@ -141,18 +141,6 @@ public:
         return aux;
     }
 
-    int EncontrarPosicao(string nome)
-    {
-        for (int i = 0; i < contatos.size(); i++)
-        {
-            if (contatos[i].getNome() == nome)
-            {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     friend ostream& operator<< (ostream& os, const Agenda& agenda)
     {
         for (auto i : agenda.contatos)
@@ -177,7 +165,6 @@ int main()
     contato.getNome();
 
     agenda.AdicionarContato(contato);
-    agenda.EncontrarPosicao("rafael");
     agenda.ProcurarContato("r");
     
     return {0};

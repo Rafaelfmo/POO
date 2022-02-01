@@ -34,7 +34,6 @@ public:
         }
     }
 
-
     bool reservar(const shared_ptr<Cliente>& cliente, int num_vagas)
     {
         for (int i = 0; i < assentos.size(); i++)
@@ -96,7 +95,21 @@ public:
 int main()
 {
     Sala sala (5);
-    Cliente cliente("Adoro cinema 123", 996237064);
-    cout << cliente << sala << endl;
+    cout << sala;
+    
+    sala.reservar(make_shared<Cliente>("Joao", 1111), 7);
+    sala.reservar(make_shared<Cliente>("Joao", 1111), 1);
+    sala.reservar(make_shared<Cliente>("Maria", 2222), 6);
+    sala.reservar(make_shared<Cliente>("Cladinho", 3333), 6);
+    sala.reservar(make_shared<Cliente>("Manu", 4444), 4);
+    sala.reservar(make_shared<Cliente>("Teteu", 5555),5);
+    sala.reservar(make_shared<Cliente>("Rafael", 6666), 3);
+    sala.reservar(make_shared<Cliente>("Adam", 7777), 0);
+
+    cout << sala;
+
+    sala.cancelar(make_shared<Cliente>("Teteu", 5555));   
+
+    cout << sala; 
     return 0;
 }

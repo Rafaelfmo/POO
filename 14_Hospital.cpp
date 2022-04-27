@@ -3,52 +3,40 @@
 #include <vector>
 #include <sstream>
 
-using namespace std;
-
 class Paciente;
-class Medico 
-{
-private:
-    string id;
-    string classe;
-    map<string, Paciente*> pacientes;
-
+class Medico {
+    std::string id;
+    std::string classe;
+    std::map<std::string, Paciente*> pacientes;
 public:
-    Medico(string id, string classe) : id(id), classe(classe) {}
-    
-    string getId() 
-    {
+    Medico(std::string id, std::string classe) : id(id), classe(classe) {}
+    std::string getId() {
         return this->id;
     }
 
     void addPaciente(Paciente* paciente);
     
-    void removerPaciente(string idPaciente);
+    void removerPaciente(std::string idPaciente);
 
-    vector<Paciente> getPacientes() 
-    {
-        vector<Paciente> gPacientes;
-        for (auto it : pacientes) 
-        {
+    std::vector<Paciente> getPacientes() {
+        std::vector<Paciente> gPacientes;
+        for (auto it : pacientes) {
             gPacientes.push_back(*it.second);
         }
         return gPacientes;
     }
 
-    string getClasse() 
-    {
+    std::string getClasse() {
         return this->classe;
     }
 
-    friend ostream& operator<<(ostream& os, Medico& medico) 
-    {
-        os << "Medico: " << medico.id << ":" << medico.classe << " Paciente: [";
+    friend std::ostream& operator<<(std::ostream& os, Medico& m) {
+        os << "Med: " << m.id << ":" << m.classe << " Pacs: [";
         int cont = 0;
-        for (auto it : medico.pacientes) 
-        {
+        for (auto it : m.pacientes) {
             cont++;
             os << it.first;
-            if(cont != (int) medico.pacientes.size()) {
+            if(cont != (int) m.pacientes.size()) {
                 os << ",";
             }
         }
@@ -57,50 +45,39 @@ public:
     }
 };
 
-class Paciente 
-{
-private:
-    string Id;
-    string diagnostico;
-    map<string, Medico*> medicos;
-
+class Paciente {
+    std::string Id;
+    std::string diagnostico;
+    std::map<std::string, Medico*> medicos;
 public:
-    Paciente(string Id, string diagnostico) : Id(Id), diagnostico(diagnostico) {}
-    
-    string getId() 
-    {
+    Paciente(std::string Id, std::string diagnostico) : Id(Id), diagnostico(diagnostico) {}
+    std::string getId() {
         return this->Id;
     }
 
     void addMedico(Medico* medico);
     
-    void removerMedico(string idMedico);
+    void removerMedico(std::string idMedico);
     
-    vector<Medico> getMedicos() 
-    {
-        vector<Medico> gMedicos;
-        for (auto it : medicos) 
-        {
+    std::vector<Medico> getMedicos() {
+        std::vector<Medico> gMedicos;
+        for (auto it : medicos) {
             gMedicos.push_back(*it.second);
         }
         return gMedicos;
     }
 
-    string getDiagnostico() 
-    {
+    std::string getDiagnostico() {
         return diagnostico;
     }
 
-    friend ostream& operator<<(ostream& os, Paciente& p) 
-    {
+    friend std::ostream& operator<<(std::ostream& os, Paciente& p) {
         os << "Pac: " << p.Id << ":" << p.diagnostico << " Meds: [";
         int cont = 0;
-        for (auto it : p.medicos) 
-        {
+        for (auto it : p.medicos) {
             cont++;
             os << it.first;
-            if(cont != (int) p.medicos.size()) 
-            {
+            if(cont != (int) p.medicos.size()) {
                 os << ",";
             }
         }
@@ -109,148 +86,126 @@ public:
     }
 };
 
-void Medico::addPaciente(Paciente* paciente) 
-{
+void Medico::addPaciente(Paciente* paciente) {
     auto key = pacientes.find(paciente->getId());
-    if (key == pacientes.end()) 
-    {
+    if (key == pacientes.end()) {
         this->pacientes[paciente->getId()] = paciente;
     }
 }
 
-void Medico::removerPaciente(string idPaciente) 
-{
+void Medico::removerPaciente(std::string idPaciente) {
     auto key = pacientes.find(idPaciente);  
-    if (key != pacientes.end()) 
-    {
+    if (key != pacientes.end()) {
         pacientes.erase(key);
     }
 }
 
-void Paciente::addMedico(Medico* medico) 
-{
+void Paciente::addMedico(Medico* medico) {
     auto key = medicos.find(medico->getId());
-        if (key == medicos.end()) 
-        {
+        if (key == medicos.end()) {
         this->medicos[medico->getId()] = medico;
-        }
+    }
 }
 
-void Paciente::removerMedico(string idMedico) 
-{
+void Paciente::removerMedico(std::string idMedico) {
     auto key = medicos.find(idMedico);  
-        if (key != medicos.end()) 
-        {
+        if (key != medicos.end()) {
         medicos.erase(key);
-        }
+    }
 }
 
-class Hospital 
-{
-private:
-    map<string, Paciente*> pacientes;
-    map<string, Medico*> medicos;
-
+class Hospital {
+    std::map<std::string, Paciente*> pacientes;
+    std::map<std::string, Medico*> medicos;
 public: 
-    Hospital(){}
+    Hospital() {}
 
-    void addPaciente(Paciente* paciente) 
-    {
+    void addPaciente(Paciente* paciente) {
         auto key = pacientes.find(paciente->getId());
-        if (key == pacientes.end()) 
-        {
+        if (key == pacientes.end()) {
             this->pacientes[paciente->getId()] = paciente;
         }
     }
 
-    void addMedico(Medico* medico) 
-    {
+    void addMedico(Medico* medico) {
         auto key = medicos.find(medico->getId());
-        if (key == medicos.end()) 
-        {
+        if (key == medicos.end()) {
             this->medicos[medico->getId()] = medico;
         }
     }
 
-    void removerPaciente(string idPaciente) 
-    {
+    void removerPaciente(std::string idPaciente) {
         auto key = pacientes.find(idPaciente);  
-        if (key != pacientes.end()) 
-        {
+        if (key != pacientes.end()) {
             pacientes.erase(key);
         }
     }
 
-    void removerMedico(string idMedico) 
-    {
+    void removerMedico(std::string idMedico) {
         auto key = medicos.find(idMedico);  
-        if (key != medicos.end()) 
-        {
+        if (key != medicos.end()) {
             medicos.erase(key);
         }
     }
 
-    void vincular(string nomeMedico, string nomePaciente) 
-    {
+    void vincular(std::string nomeMedico, std::string nomePaciente) {
         this->medicos[nomeMedico]->addPaciente(this->pacientes[nomePaciente]);
         this->pacientes[nomePaciente]->addMedico(this->medicos[nomeMedico]);
     }
 
-    friend ostream& operator<<(ostream& os, Hospital& h) 
-    {
+    friend std::ostream& operator<<(std::ostream& os, Hospital& h) {
         os << "Medicos:\n";
         for (auto it : h.medicos) {
-            os << *it.second << endl;
+            os << *it.second << std::endl;
         }
         os << "\nPacientes:\n";
         for (auto it : h.pacientes) {
-            os << *it.second << endl;
+            os << *it.second << std::endl;
         }
         return os;
     }
 };
 
-int main() 
-{
+int main() {
     Hospital hospital;
 
     while(true) {
-        string line;
-        getline(cin, line);
-        stringstream ss(line);
-        string cmd;
+        std::string line;
+        std::getline(std::cin, line);
+        std::stringstream ss(line);
+        std::string cmd;
         ss >> cmd;
 
         if (cmd == "end") {
             break;
         } else if (cmd == "addPac") {
-            string id;
-            string diagnostico;
+            std::string id;
+            std::string diagnostico;
             ss >> id >> diagnostico;
             hospital.addPaciente(new Paciente(id, diagnostico));
         } else if (cmd == "remPac") {
-            string id;
+            std::string id;
             ss >> id;
             hospital.removerPaciente(id);
         } else if (cmd == "addMed") {
-            string id;
-            string classe;
+            std::string id;
+            std::string classe;
             ss >> id >> classe;
             hospital.addMedico(new Medico(id, classe));
         } else if (cmd == "remMed") {
-            string id;
+            std::string id;
             ss >> id;
             hospital.removerMedico(id);
         } else if (cmd == "vincular") {
-            string nomeMedico;
-            string nomePaciente;
+            std::string nomeMedico;
+            std::string nomePaciente;
             ss >> nomeMedico >> nomePaciente;
             hospital.vincular(nomeMedico, nomePaciente);
         } else if (cmd == "show") {
-            cout << hospital;
+            std::cout << hospital;
         } else {
-            cout << "fail: comando invalido" << endl;
+            std::cout << "fail: comando invalido" << std::endl;
         }
+
     }
-    return 0;
 }

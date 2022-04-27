@@ -1,98 +1,114 @@
 #include <iostream>
-#include <algorithm>
+#include <sstream>
 #include <vector>
-using namespace std;
 
-struct Pessoa
-{
-    string nome {""};
-    int idade {0};
-    float peso {0};
+struct Pessoa {
+    std::string nome;
+    int idade;
 
-    Pessoa(string nome = "", int idade = 0, float peso = 0) : nome{nome}, idade{idade}, peso{peso}{}
+    Pessoa(std::string nome = "", int idade = 0) {
+        this->nome = nome;
+        this->idade = idade;
+    }
 
-    friend ostream& operator<<(ostream& os, const Pessoa& pessoa)
-    {
-        os << "nome: " << pessoa.nome << "\n";
-        os << "idade: " << pessoa.idade << " anos\n";
-        os << "peso: " << pessoa.peso << " kg's";
+    Pessoa(int idade) : Pessoa("", idade) {
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Pessoa& p) {
+        os << "Nome: " << p.nome << " Idade: " << p.idade;
         return os;
     }
 };
 
-struct Moto
-{
-    int potencia{1};
-    int minutos{0};
-    Pessoa* pessoa{nullptr};
 
-    Moto(int potencia = 1, int minutos = 0, Pessoa* pessoa = nullptr) : potencia{potencia}, minutos{minutos}, pessoa{pessoa}{}
+struct Motoca {
+    Pessoa* pessoa {nullptr};
+    int tempo {0};
+    int potencia {1};
+    Motoca(int pot): potencia {pot} {
+    }
 
-    bool InserirHumano(Pessoa* pessoa)
-    {
-        if (this->pessoa = nullptr)
-        {
-            cout << "não tem criança no volante, vamos colocar uma\n";
-            this->pessoa = pessoa;
-            return true;
+
+    bool inserirPessoa(Pessoa* p) {
+        if (this->pessoa != nullptr) {
+            std::cout << "Motoca cheia" << std::endl;
+            return false;
         }
-    }
-
-    Pessoa* RemoverHumano()
-    {
-       if (Pessoa* pessoa = this->pessoa)
-        return exchange(this->pessoa, nullptr);
-    }
-
-    bool VerificarHumano(Pessoa* pessoa)
-    {
-        if (this->pessoa != nullptr)
-        {
-        cout << "Tem uma criança no volante\n";
+        this->pessoa = p;
         return true;
-        }
-        if (this->pessoa = nullptr)
-        {
-            cout << "Sem criaças no volante";
-            return false;
-        }
     }
 
-    void CompraMinutos(int minutos)
-    {
-        this->minutos += minutos;
+    std::string grau() {
+        return "Rand" + std::string(this->potencia, 'a') + 'n';
     }
 
-    bool Dirigir(int tempo)
-    {
-        if (this->pessoa == nullptr)
-        {
-            cout << "Não existe motorista";
+    Pessoa * removerPessoa() {
+        Pessoa * p = this->pessoa;
+        this->pessoa = nullptr;
+        return p;
+    }
+
+    void comprarTempo(int tempo) {
+        this->tempo += tempo;
+    }
+
+    bool dirigir(int tempo) {
+        if (this->pessoa == nullptr) {
+            std::cout << "nao tem gente pra dirigir" << std::endl;
             return false;
         }
-        if (this->minutos < minutos)
-        {
-            cout << "A criança dirigu por: " << this->minutos << "minutos\n";
-            this->minutos = 0;
+        if (tempo > this->tempo) {
+            std::cout << "só conseguiu dirigir " << this->tempo << " minutos" << std::endl;
+            this->tempo = 0;
             return true;
         }
-        cout << "A criança dirigiu por: " << this->minutos << "minutos\n" << endl;
-        this->minutos -= minutos;
-    }
-};
-    
- ostream& operator<<(ostream& os, const Moto& moto)
-    {
-        os << "potencia: " << moto.potencia << "\n";
-        os << "minutos: " << moto.minutos << " minutos\n";
-        os << "Pessoa: " << moto.pessoa->nome << " ";
-        return os;
+        std::cout << "conseguiu dirigir " << this->tempo << " minutos" << std::endl;
+        this->tempo -= tempo;
     }
 
-int main()
-{
-    Pessoa humano ("Rafael", 19, 70);
-    Moto vrumvrum (10, 30, &humano);
-    cout << vrumvrum << endl;
-    return {0};
+    friend std::ostream& operator<<(std::ostream& os, const Motoca& m) {
+        os << "T: " << m.tempo << " P: " << m.potencia;
+        os << "[" << (m.pessoa == nullptr ? "vazio" : m.pessoa->nome) << "]";
+        return os;
+    }
+};
+
+int main() {
+    Motoca motoca(1);
+    while (true) {
+        std::string line;
+        std::string cmd;
+        std::stringstream ss(line);
+
+        std::cin >> cmd;
+
+        std::getline(std::cin, line);
+        
+        ss << line;
+        if (cmd == "end") {
+            break;
+        } else if (cmd == "init") {
+            int pot = 0;
+            ss >> pot;
+            motoca = Motoca(pot);
+        } else if (cmd == "show") {
+            std::cout << motoca << std::endl;
+        } else if (cmd == "inserir") {
+            std::string nome {};
+            int idade {};
+            ss >> nome >> idade;
+            Pessoa* pessoa = new Pessoa(nome, idade);
+            if(!motoca.inserirPessoa(pessoa))
+                delete pessoa;
+        } else if (cmd == "retirar") {
+            Pessoa* pessoa = motoca.removerPessoa();
+            if (pessoa != nullptr) {
+                delete pessoa;
+            }
+        } else if (cmd == "grau") {
+            std::cout << motoca.grau();
+        } else {
+            std::cout << "Comando nao existe" << std::endl;
+        }
+    }
 }

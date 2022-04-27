@@ -1,86 +1,67 @@
 #include <iostream>
-#include <vector>
+#include <list>
 #include <memory>
-#include <map>
+#include <vector>
+
 using namespace std;
 
-class Cliente
-{
+class Cliente{
 public:
-    string id{""};
-    long int numero{0};
+    string id;
+    int fone;
 
-    Cliente(string id = "", long int numero = 0) : id{id}, numero{numero}{}
+    Cliente(string id = "", int fone = 0) : id(id), fone(fone) {}
 
-    friend ostream& operator<< (ostream& os, const Cliente& cliente)
-    {
-        os << "id: " << cliente.id << ", " << "Telefone: " << cliente.numero << endl;
+    friend ostream& operator<<(ostream& os, const Cliente& c){
+        os << c.id << ":" << c.fone;
         return os;
     }
 };
 
-class Sala
-{
+class Cinema{
 private:
-    map<int, shared_ptr<Cliente>> assentos;
-
+    vector<shared_ptr <Cliente>> cadeiras;
 public:
+    Cinema(int qtd_cad) : cadeiras(qtd_cad, nullptr) {}
 
-    Sala(int qtd_assentos)
-    {
-        for (int i = 0; i < qtd_assentos; i++)
-        {
-            assentos[i] = nullptr;
-        }
-    }
-
-    bool reservar(const shared_ptr<Cliente>& cliente, int num_vagas)
-    {
-        for (int i = 0; i < assentos.size(); i++)
-        {
-            if(this->assentos[i] != nullptr && this->assentos[i]->id == cliente->id)
-            {
-                cout << "erro" << endl;
+    bool reserva(const shared_ptr<Cliente>& cliente, int num_cad){
+        for(size_t i = 0; i < cadeiras.size(); i++) {
+            if(this->cadeiras[i] != nullptr && this->cadeiras[i]->id == cliente->id){
+                cout << "so eh permitida uma reserva por pessoa neste estabelecimento" << endl;
                 return false;
             }
         }
-
-        if(this->assentos[num_vagas] != nullptr)
-        {
-            cout << "funcionou" << endl;
+        if(this->cadeiras[num_cad] != nullptr){
+            cout << "cadeira em uso" << endl;
             return false;
         }
-        if(this->assentos[num_vagas] == nullptr)
-        {
-            this->assentos[num_vagas] = cliente;
-            cout << "funcionou2" << endl;
+        if(this->cadeiras[num_cad] == nullptr){
+            this->cadeiras[num_cad] = cliente;
+            cout << "reserva feita com sucesso" << endl;
             return true;
         }
         return false;
     }
 
-    bool cancelar(const shared_ptr<Cliente>& cliente)
-    {
-        for (int i = 0; i < assentos.size(); i++)
-        {
-            if(this->assentos[i] != nullptr && this->assentos[i]->id == cliente->id)
-            {
-                assentos[i] = nullptr;
-                cout << "cancelado" << endl;
+    bool cancelar(const shared_ptr<Cliente>& cliente){
+        for(size_t i = 0; i < cadeiras.size(); i++){
+            if (this->cadeiras[i] != nullptr && this->cadeiras[i]->id == cliente->id){
+                cadeiras[i] = nullptr;
+                cout << "reserva cancelada com sucesso" << endl;
                 return true;
             }
         }
-        cout << "erro" << endl;
+        cout << "Ninguem com esse id tinha uma reserva" << endl;
         return false;
     }
 
- friend ostream& operator<<(ostream& os, const Sala& sala){
+    friend ostream& operator<<(ostream& os, const Cinema& c){
         os << "[ ";
-        for(int i = 0; i < sala.assentos.size(); i++){
-            auto cadeiras = sala.assentos;
+        for(size_t i = 0; i < c.cadeiras.size(); i++){
+            auto cadeiras = c.cadeiras[i];
             os << " ";
-            if(cadeiras[i] != nullptr){
-                os << *cadeiras[i];
+            if(cadeiras != nullptr){
+                os << *cadeiras;
             } else {
                 os << "-";
             }
@@ -89,27 +70,24 @@ public:
         os << "]" << endl;
         return os;
     }
-
 };
 
-int main()
-{
-    Sala sala (5);
-    cout << sala;
-    
-    sala.reservar(make_shared<Cliente>("Joao", 1111), 7);
-    sala.reservar(make_shared<Cliente>("Joao", 1111), 1);
-    sala.reservar(make_shared<Cliente>("Maria", 2222), 6);
-    sala.reservar(make_shared<Cliente>("Cladinho", 3333), 6);
-    sala.reservar(make_shared<Cliente>("Manu", 4444), 4);
-    sala.reservar(make_shared<Cliente>("Teteu", 5555),5);
-    sala.reservar(make_shared<Cliente>("Rafael", 6666), 3);
-    sala.reservar(make_shared<Cliente>("Adam", 7777), 0);
+int main(){
+    Cinema cinema(10);
+    cout << cinema;
 
-    cout << sala;
+    cinema.reserva(make_shared<Cliente>("Joao", 1111), 7);
+    cinema.reserva(make_shared<Cliente>("Joao", 1111), 1);
+    cinema.reserva(make_shared<Cliente>("Maria", 2222), 6);
+    cinema.reserva(make_shared<Cliente>("Cladinho", 3333), 6);
+    cinema.reserva(make_shared<Cliente>("Manu", 4444), 4);
+    cinema.reserva(make_shared<Cliente>("Teteu", 5555),5);
+    cinema.reserva(make_shared<Cliente>("Rafael", 6666), 3);
+    cinema.reserva(make_shared<Cliente>("Adam", 7777), 0);
 
-    sala.cancelar(make_shared<Cliente>("Teteu", 5555));   
+    cout << cinema;
 
-    cout << sala; 
-    return 0;
+    cinema.cancelar(make_shared<Cliente>("Teteu", 5555));   
+
+    cout << cinema; 
 }

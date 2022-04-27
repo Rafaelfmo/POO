@@ -1,62 +1,77 @@
 #include <iostream>
 #include <list>
-#include <algorithm>
 #include <memory>
+#include <vector>
+
 using namespace std;
 
-class Crianca
-{
-private:
-    int idade{0};
-    string nome{""};
-
+class Kid{
 public:
-    Crianca(int idade = 0, string nome = "") : idade{idade}, nome{nome}{}
+    int idade;
+    string nome;
 
-    friend ostream& operator<< (ostream& os, const Crianca& crianca)
-    {
-         os << "Nome: " << crianca.nome <<", " << " Idade: " << crianca.idade << endl;
+    Kid(int idade = 0, std::string nome = "") : idade(idade), nome(nome) {}
+
+    friend ostream& operator<<(ostream& os, const Kid& k) {
+        os << "Nome: " << k.nome << " Idade: " << k.idade << endl;
         return os;
     }
 };
 
-class Pulapula
-{
+class Trampoline{
 private:
-    list <shared_ptr<Crianca>> fila;
-    list <shared_ptr<Crianca>> pulapula;
-
+    list<shared_ptr <Kid>> brincando;
+    list<shared_ptr <Kid>> esperando;
 public:
-    Pulapula(int tamanho) : fila(tamanho, nullptr){}
+    Trampoline(int tam_fila) : esperando(tam_fila, nullptr) {}
 
-    void Colocar(const shared_ptr<Crianca> &crianca)
-    {
-        this->fila.push_back(crianca);
+    void chegar(const shared_ptr<Kid>& kid){
+        this->esperando.push_front(kid);
     }
 
-    void entrar()
-    {
-            this->pulapula.push_back(*(this->fila.rbegin()));
-            this->fila.pop_back();
+    bool entrar() {
+        this->brincando.push_front(*this->esperando.begin());
+        esperando.pop_front();
+        cout << "Crianca entrou\n";
+        return true;
     }
 
-    void sair()
-    {
-        this->fila.push_back(*(this->pulapula.rbegin()));
-        this->pulapula.pop_back();
+    bool sair(){
+       this->esperando.push_front(*this->brincando.begin());
+        brincando.pop_front();
+        cout << "Crianca saiu\n";
+        return true;
     }
 
-    friend ostream& operator<< (ostream& os, const Pulapula& pulapula)
-    {
-        os << "Brincando: ";
-        for(auto brincando: pulapula.pulapula){
+    bool papai_chegou(const shared_ptr<Kid>& kid) {
+        for (auto it = esperando.begin(); it != esperando.end(); it++){
+            if(it->get()->nome == kid->nome){
+                esperando.remove(*it);
+                cout << "pai achou a crianca\n";
+                return true;
+            }
+        }
+        for (auto it = brincando.begin(); it != brincando.end(); it++){
+            if(it->get()->nome == kid->nome){
+                brincando.remove(*it);
+                cout << "pai achou a crianca\n";
+                return true;
+            }
+        }
+        cout << "pai achou a nao crianca";
+        return false;
+    }
+
+    friend ostream& operator<<(ostream& os, const Trampoline& t) {
+        os << "Brincando: \n";
+        for(auto brincando: t.brincando){
             if(brincando != nullptr){
                 os << *brincando;
             }
         }
         os << "\n";
         os << "Esperando: \n";
-        for(auto esperando: pulapula.fila){
+        for(auto esperando: t.esperando){
             if(esperando != nullptr){
                 os << *esperando;
             }
@@ -65,19 +80,22 @@ public:
 
         return os;
     }
+
 };
 
-int main()
-{
-    Pulapula fila(5);
+int main(){
+    Trampoline tramp(5);
+    tramp.chegar(make_shared<Kid>(12, "Joao"));
+    tramp.chegar(make_shared<Kid>(12, "Maria"));
+    cout << tramp;
 
-    fila.Colocar(make_shared<Crianca>(19, "Rafael"));
-    fila.Colocar(make_shared<Crianca>(19, "Mateus"));
-    cout << fila << endl;
+    tramp.entrar();
+    tramp.entrar();
+    cout << tramp;
 
-    fila.entrar();
-    fila.sair();
+    tramp.sair();
+    cout << tramp;
 
-    cout << fila << endl; 
-    return {0};
+    tramp.papai_chegou(make_shared<Kid>(12, "Joao"));
+    cout << tramp;
 }

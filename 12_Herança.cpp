@@ -69,5 +69,5 @@ int main()
     humano.Reproduzir();
     humano.morrer();
     humano.Brincar();
-    return 0;
+    return {0};
 }
